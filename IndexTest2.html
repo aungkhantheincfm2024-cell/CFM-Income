@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CFM Daily Income</title>
+    
+    <!-- PWA / Mobile Fullscreen Settings -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#1b69fd">
+    
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 16px;
+        }
+
+        .app-card {
+            background: #ffffff;
+            width: 100%;
+            max-width: 400px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(27, 105, 253, 0.12);
+            padding: 24px;
+            text-align: center;
+            border: 1px solid #e1e8f0;
+        }
+
+        .header-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1b69fd;
+            margin-bottom: 6px;
+        }
+
+        .header-sub {
+            font-size: 13px;
+            color: #64748b;
+            margin-bottom: 24px;
+        }
+
+        .income-container {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 24px 12px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .income-container.active {
+            border-color: #1b69fd;
+            background: #f0f5ff;
+        }
+
+        .income-label {
+            font-size: 13px;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .income-value {
+            font-size: 32px;
+            font-weight: 800;
+            color: #013dff;
+            word-break: break-all;
+        }
+
+        .timestamp {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-top: 8px;
+        }
+
+        .btn-refresh {
+            width: 100%;
+            background-color: #1b69fd;
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            padding: 14px 20px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(27, 105, 253, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        .btn-refresh:active {
+            transform: scale(0.98);
+            background-color: #013dff;
+        }
+
+        .btn-refresh:disabled {
+            background-color: #94a3b8;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        .status-msg {
+            font-size: 13px;
+            margin-top: 14px;
+            min-height: 18px;
+        }
+
+        .status-error { color: #ef4444; }
+        .status-success { color: #10b981; }
+    </style>
+</head>
+<body>
+
+    <div class="app-card">
+        <div class="header-title">CFM Daily Income</div>
+        <div class="header-sub">ဆိုင်အားလုံး၏ ဝင်ငွေစာရင်း</div>
+
+        <div class="income-container" id="displayBox">
+            <div class="income-label">ဆိုင် (၁) ၏ ယနေ့ ရရှိငွေပမာဏ</div>
+            <div class="income-value" id="incomeTxt1">--- ကျပ်</div>
+	    <div class="timestamp" id="timeTxt1">နောက်ဆုံးရယူချိန်: မရှိသေးပါ</div>
+        </div>
+    <div class="income-container" id="displayBox">
+            <div class="income-label">ဆိုင် (၂) ၏ ယနေ့ရရှိငွေပမာဏ</div>
+            <div class="income-value" id="incomeTxt2">--- ကျပ်</div>
+	    <div class="timestamp" id="timeTxt2">နောက်ဆုံးရယူချိန်: မရှိသေးပါ</div>
+        </div>
+
+        <button class="btn-refresh" id="fetchBtn" onclick="loadIncome()">
+            <span>ဒေတာ ရယူမည်</span>
+        </button>
+
+        <div class="status-msg" id="statusTxt"></div>
+    </div>
+ 
+    <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwPjKmIZ52kutHjo9karnaxAhvHjcz1VeyzMhoVWE-bKAA9yBhORZF4BtDrNz3TIpw/exec";
+
+const incomeTxt1 = document.getElementById("incomeTxt1");
+const timeTxt1 = document.getElementById("timeTxt1");
+const incomeTxt2 = document.getElementById("incomeTxt2");
+const timeTxt2 = document.getElementById("timeTxt2");
+const statusTxt = document.getElementById("statusTxt");
+const fetchBtn = document.getElementById("fetchBtn");
+
+ // စဖွင့်ချိန်တွင် စက်ထဲသိမ်းထားသော နောက်ဆုံးရ ဒေတာကို ဖော်ပြခြင်း
+ window.addEventListener("DOMContentLoaded", () => {
+            const cachedIncome = localStorage.getItem("last_income");
+            const cachedTime = localStorage.getItem("last_time");
+            
+            if (cachedIncome) {
+                incomeTxt.innerText = cachedIncome;
+                timeTxt.innerText = "နောက်ဆုံးရယူချိန်: " + (cachedTime || "-");
+            }
+            
+            // စဖွင့်သည်နှင့် ဒေတာ အလိုအလျောက် ဆွဲယူရန်
+            loadIncome();
+        });
+async function loadIncome() {
+    fetchBtn.disabled = true;
+    statusTxt.className = "status-msg";
+    statusTxt.innerText = "ချိတ်ဆက်နေပါသည်...";
+
+    try {
+        const response = await fetch(SCRIPT_URL, {
+            method: "GET",
+            redirect: "follow"
+        });
+
+        if (!response.ok) {
+            throw new Error("HTTP error! Status: " + response.status);
+        }
+
+        // JSON format ဖြင့် ဒေတာကို ဖတ်ယူခြင်း
+        const data = await response.json();
+
+        // ဆိုင် ၁ ဒေတာ ထည့်သွင်းခြင်း
+        const val1 = Number(data.shop1) ? Number(data.shop1).toLocaleString() + " ကျပ်" : data.shop1 + " ကျပ်";
+        incomeTxt1.innerText = val1;
+
+        // ဆိုင် ၂ ဒေတာ ထည့်သွင်းခြင်း
+        const val2 = Number(data.shop2) ? Number(data.shop2).toLocaleString() + " ကျပ်" : data.shop2 + " ကျပ်";
+        incomeTxt2.innerText = val2;
+
+        const now = new Date();
+        const timeString = now.toLocaleDateString() + " " + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        timeTxt1.innerText = "နောက်ဆုံးရယူချိန်: " + timeString;
+        timeTxt2.innerText = "နောက်ဆုံးရယူချိန်: " + timeString;
+
+        statusTxt.className = "status-msg status-success";
+        statusTxt.innerText = "ဒေတာ အောင်မြင်စွာ ရယူပြီးပါပြီ။";
+    } catch (err) {
+        statusTxt.className = "status-msg status-error";
+        statusTxt.innerText = "ချိတ်ဆက်မှု မအောင်မြင်ပါ (အင်တာနက် စစ်ဆေးပါ)";
+    } finally {
+        fetchBtn.disabled = false;
+    }
+}
+        </script>
+</body>
+</html>
