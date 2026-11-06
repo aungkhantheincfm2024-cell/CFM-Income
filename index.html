@@ -161,19 +161,6 @@ const timeTxt2 = document.getElementById("timeTxt2");
 const statusTxt = document.getElementById("statusTxt");
 const fetchBtn = document.getElementById("fetchBtn");
 
- // စဖွင့်ချိန်တွင် စက်ထဲသိမ်းထားသော နောက်ဆုံးရ ဒေတာကို ဖော်ပြခြင်း
- window.addEventListener("DOMContentLoaded", () => {
-            const cachedIncome = localStorage.getItem("last_income");
-            const cachedTime = localStorage.getItem("last_time");
-            
-            if (cachedIncome) {
-                incomeTxt.innerText = cachedIncome;
-                timeTxt.innerText = "နောက်ဆုံးရယူချိန်: " + (cachedTime || "-");
-            }
-            
-            // စဖွင့်သည်နှင့် ဒေတာ အလိုအလျောက် ဆွဲယူရန်
-            loadIncome();
-        });
 async function loadIncome() {
     fetchBtn.disabled = true;
     statusTxt.className = "status-msg";
@@ -214,6 +201,22 @@ async function loadIncome() {
         fetchBtn.disabled = false;
     }
 }
+window.addEventListener("load", () => {
+        // Cache ရှိပါက မဆွဲယူမီ ကြိုတင်ပြသထားခြင်း
+        const c1 = localStorage.getItem("cache_shop1");
+        const c2 = localStorage.getItem("cache_shop2");
+        const cTime = localStorage.getItem("cache_time");
+
+        if (c1) incomeTxt1.innerText = c1;
+        if (c2) incomeTxt2.innerText = c2;
+        if (cTime) {
+            timeTxt1.innerText = "နောက်ဆုံးရယူချိန်: " + cTime;
+            timeTxt2.innerText = "နောက်ဆုံးရယူချိန်: " + cTime;
+        }
+
+        // Background မှ Google Sheet Data ကို အလိုအလျောက် တိုက်ရိုက်ဆွဲယူခြင်း
+        loadIncome();
+    });
         </script>
 </body>
 </html>
