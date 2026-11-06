@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>CFM Daily Income</title>
     
-    <!-- PWA / Mobile Fullscreen Settings -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -32,60 +31,83 @@
         .app-card {
             background: #ffffff;
             width: 100%;
-            max-width: 400px;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(27, 105, 253, 0.12);
-            padding: 24px;
+            max-width: 420px;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(27, 105, 253, 0.12);
+            padding: 24px 20px;
             text-align: center;
             border: 1px solid #e1e8f0;
         }
 
         .header-title {
-            font-size: 20px;
-            font-weight: 700;
+            font-size: 22px;
+            font-weight: 800;
             color: #1b69fd;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
 
         .header-sub {
             font-size: 13px;
             color: #64748b;
-            margin-bottom: 24px;
-        }
-
-        .income-container {
-            background: #f8fafc;
-            border: 2px solid #e2e8f0;
-            border-radius: 16px;
-            padding: 24px 12px;
             margin-bottom: 20px;
-            transition: all 0.3s ease;
         }
 
-        .income-container.active {
-            border-color: #1b69fd;
-            background: #f0f5ff;
+        /* Grand Total Box (ထိပ်ဆုံး ပေါ်လွင်စေမည့် Card) */
+        .total-container {
+            background: linear-gradient(135deg, #1b69fd 0%, #013dff 100%);
+            border-radius: 18px;
+            padding: 22px 16px;
+            margin-bottom: 16px;
+            color: white;
+            box-shadow: 0 8px 20px rgba(1, 61, 255, 0.25);
         }
 
-        .income-label {
+        .total-label {
             font-size: 13px;
-            color: #64748b;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 8px;
+            letter-spacing: 0.8px;
+            opacity: 0.9;
+            margin-bottom: 6px;
         }
 
-        .income-value {
-            font-size: 32px;
-            font-weight: 800;
-            color: #013dff;
+        .total-value {
+            font-size: 34px;
+            font-weight: 900;
             word-break: break-all;
         }
 
+        /* ဆိုင်ခွဲ Card များ */
+        .shop-container {
+            background: #f8fafc;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 16px 12px;
+            margin-bottom: 14px;
+            text-align: center;
+        }
+
+        .shop-label {
+            font-size: 13px;
+            color: #64748b;
+            margin-bottom: 6px;
+        }
+
+        .shop-value {
+            font-size: 26px;
+            font-weight: 800;
+            color: #013dff;
+        }
+
         .timestamp {
-            font-size: 12px;
+            font-size: 11px;
             color: #94a3b8;
-            margin-top: 8px;
+            margin-top: 6px;
+        }
+
+        .total-timestamp {
+            font-size: 11px;
+            opacity: 0.8;
+            margin-top: 6px;
         }
 
         .btn-refresh {
@@ -93,16 +115,13 @@
             background-color: #1b69fd;
             color: #ffffff;
             border: none;
-            border-radius: 12px;
-            padding: 14px 20px;
+            border-radius: 14px;
+            padding: 15px;
             font-size: 16px;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(27, 105, 253, 0.3);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 8px;
+            box-shadow: 0 4px 14px rgba(27, 105, 253, 0.3);
+            margin-top: 8px;
             transition: background-color 0.2s, transform 0.1s;
         }
 
@@ -119,7 +138,7 @@
 
         .status-msg {
             font-size: 13px;
-            margin-top: 14px;
+            margin-top: 12px;
             min-height: 18px;
         }
 
@@ -131,17 +150,27 @@
 
     <div class="app-card">
         <div class="header-title">CFM Daily Income</div>
-        <div class="header-sub">ဆိုင်အားလုံး၏ ဝင်ငွေစာရင်း</div>
+        <div class="header-sub">ဆိုင်ခွဲအားလုံး၏ လက်ရှိငွေသားစာရင်း</div>
 
-        <div class="income-container" id="displayBox">
-            <div class="income-label">ဆိုင် (၁) ၏ ယနေ့ ရရှိငွေပမာဏ</div>
-            <div class="income-value" id="incomeTxt1">--- ကျပ်</div>
-	    <div class="timestamp" id="timeTxt1">နောက်ဆုံးရယူချိန်: မရှိသေးပါ</div>
+        <!-- ၁။ ဆိုင်အားလုံး စုစုပေါင်း ဝင်ငွေ Card (Grand Total) -->
+        <div class="total-container">
+            <div class="total-label">ဆိုင်အားလုံး စုစုပေါင်းငွေသား</div>
+            <div class="total-value" id="grandTotalTxt">--- ကျပ်</div>
+            <div class="total-timestamp" id="totalTimeTxt">နောက်ဆုံးရယူချိန်: မရှိသေးပါ</div>
         </div>
-    <div class="income-container" id="displayBox">
-            <div class="income-label">ဆိုင် (၂) ၏ ယနေ့ရရှိငွေပမာဏ</div>
-            <div class="income-value" id="incomeTxt2">--- ကျပ်</div>
-	    <div class="timestamp" id="timeTxt2">နောက်ဆုံးရယူချိန်: မရှိသေးပါ</div>
+
+        <!-- ၂။ ဆိုင် (၁) Card -->
+        <div class="shop-container">
+            <div class="shop-label">ဆိုင် (၁) ၏ ယနေ့ရရှိငွေပမာဏ</div>
+            <div class="shop-value" id="incomeTxt1">--- ကျပ်</div>
+            <div class="timestamp" id="timeTxt1">နောက်ဆုံးရယူချိန်: မရှိသေးပါ</div>
+        </div>
+
+        <!-- ၃။ ဆိုင် (၂) Card -->
+        <div class="shop-container">
+            <div class="shop-label">ဆိုင် (၂) ၏ ယနေ့ရရှိငွေပမာဏ</div>
+            <div class="shop-value" id="incomeTxt2">--- ကျပ်</div>
+            <div class="timestamp" id="timeTxt2">နောက်ဆုံးရယူချိန်: မရှိသေးပါ</div>
         </div>
 
         <button class="btn-refresh" id="fetchBtn" onclick="loadIncome()">
@@ -150,73 +179,98 @@
 
         <div class="status-msg" id="statusTxt"></div>
     </div>
- 
+
     <script>
+        // သင့် Google Apps Script Web App URL
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwPjKmIZ52kutHjo9karnaxAhvHjcz1VeyzMhoVWE-bKAA9yBhORZF4BtDrNz3TIpw/exec";
 
-const incomeTxt1 = document.getElementById("incomeTxt1");
-const timeTxt1 = document.getElementById("timeTxt1");
-const incomeTxt2 = document.getElementById("incomeTxt2");
-const timeTxt2 = document.getElementById("timeTxt2");
-const statusTxt = document.getElementById("statusTxt");
-const fetchBtn = document.getElementById("fetchBtn");
+        const grandTotalTxt = document.getElementById("grandTotalTxt");
+        const totalTimeTxt = document.getElementById("totalTimeTxt");
+        const incomeTxt1 = document.getElementById("incomeTxt1");
+        const timeTxt1 = document.getElementById("timeTxt1");
+        const incomeTxt2 = document.getElementById("incomeTxt2");
+        const timeTxt2 = document.getElementById("timeTxt2");
+        const statusTxt = document.getElementById("statusTxt");
+        const fetchBtn = document.getElementById("fetchBtn");
 
-async function loadIncome() {
-    fetchBtn.disabled = true;
-    statusTxt.className = "status-msg";
-    statusTxt.innerText = "ချိတ်ဆက်နေပါသည်...";
+        async function loadIncome() {
+            if (fetchBtn) fetchBtn.disabled = true;
+            if (statusTxt) {
+                statusTxt.className = "status-msg";
+                statusTxt.innerText = "ချိတ်ဆက်နေပါသည်...";
+            }
 
-    try {
-        const response = await fetch(SCRIPT_URL, {
-            method: "GET",
-            redirect: "follow"
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: "GET",
+                    redirect: "follow"
+                });
+
+                if (!response.ok) {
+                    throw new Error("HTTP status " + response.status);
+                }
+
+                const data = await response.json();
+
+                // ဂဏန်းသီးသန့် ရှင်းထုတ်ပြီး ပေါင်းစပ်တွက်ချက်ခြင်း
+                const num1 = parseFloat(String(data.shop1).replace(/[^0-9.-]+/g, "")) || 0;
+                const num2 = parseFloat(String(data.shop2).replace(/[^0-9.-]+/g, "")) || 0;
+                const totalNum = num1 + num2;
+
+                const val1 = num1.toLocaleString() + " ကျပ်";
+                const val2 = num2.toLocaleString() + " ကျပ်";
+                const grandTotalVal = totalNum.toLocaleString() + " ကျပ်";
+
+                // UI ပေါ် ပြသခြင်း
+                incomeTxt1.innerText = val1;
+                incomeTxt2.innerText = val2;
+                grandTotalTxt.innerText = grandTotalVal;
+
+                // အချိန် သတ်မှတ်ခြင်း
+                const now = new Date();
+                const timeString = now.toLocaleDateString() + " " + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                timeTxt1.innerText = "နောက်ဆုံးရယူချိန်: " + timeString;
+                timeTxt2.innerText = "နောက်ဆုံးရယူချိန်: " + timeString;
+                totalTimeTxt.innerText = "နောက်ဆုံးရယူချိန်: " + timeString;
+
+                // Offline အတွက် LocalStorage တွင် သိမ်းခြင်း
+                localStorage.setItem("cache_total", grandTotalVal);
+                localStorage.setItem("cache_shop1", val1);
+                localStorage.setItem("cache_shop2", val2);
+                localStorage.setItem("cache_time", timeString);
+
+                if (statusTxt) {
+                    statusTxt.className = "status-msg status-success";
+                    statusTxt.innerText = "ဒေတာ အောင်မြင်စွာ ရယူပြီးပါပြီ။";
+                }
+            } catch (err) {
+                if (statusTxt) {
+                    statusTxt.className = "status-msg status-error";
+                    statusTxt.innerText = "ချိတ်ဆက်မှု မအောင်မြင်ပါ (အင်တာနက် စစ်ဆေးပါ)";
+                }
+            } finally {
+                if (fetchBtn) fetchBtn.disabled = false;
+            }
+        }
+
+        // စဖွင့်သည်နှင့် အလိုအလျောက် အလုပ်လုပ်စေခြင်း
+        window.addEventListener("load", () => {
+            const cTotal = localStorage.getItem("cache_total");
+            const c1 = localStorage.getItem("cache_shop1");
+            const c2 = localStorage.getItem("cache_shop2");
+            const cTime = localStorage.getItem("cache_time");
+
+            if (cTotal) grandTotalTxt.innerText = cTotal;
+            if (c1) incomeTxt1.innerText = c1;
+            if (c2) incomeTxt2.innerText = c2;
+            if (cTime) {
+                timeTxt1.innerText = "နောက်ဆုံးရယူချိန်: " + cTime;
+                timeTxt2.innerText = "နောက်ဆုံးရယူချိန်: " + cTime;
+                totalTimeTxt.innerText = "နောက်ဆုံးရယူချိန်: " + cTime;
+            }
+
+            loadIncome();
         });
-
-        if (!response.ok) {
-            throw new Error("HTTP error! Status: " + response.status);
-        }
-
-        // JSON format ဖြင့် ဒေတာကို ဖတ်ယူခြင်း
-        const data = await response.json();
-
-        // ဆိုင် ၁ ဒေတာ ထည့်သွင်းခြင်း
-        const val1 = Number(data.shop1) ? Number(data.shop1).toLocaleString() + " ကျပ်" : data.shop1 + " ကျပ်";
-        incomeTxt1.innerText = val1;
-
-        // ဆိုင် ၂ ဒေတာ ထည့်သွင်းခြင်း
-        const val2 = Number(data.shop2) ? Number(data.shop2).toLocaleString() + " ကျပ်" : data.shop2 + " ကျပ်";
-        incomeTxt2.innerText = val2;
-
-        const now = new Date();
-        const timeString = now.toLocaleDateString() + " " + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        timeTxt1.innerText = "နောက်ဆုံးရယူချိန်: " + timeString;
-        timeTxt2.innerText = "နောက်ဆုံးရယူချိန်: " + timeString;
-
-        statusTxt.className = "status-msg status-success";
-        statusTxt.innerText = "ဒေတာ အောင်မြင်စွာ ရယူပြီးပါပြီ။";
-    } catch (err) {
-        statusTxt.className = "status-msg status-error";
-        statusTxt.innerText = "ချိတ်ဆက်မှု မအောင်မြင်ပါ (အင်တာနက် စစ်ဆေးပါ)";
-    } finally {
-        fetchBtn.disabled = false;
-    }
-}
-window.addEventListener("load", () => {
-        // Cache ရှိပါက မဆွဲယူမီ ကြိုတင်ပြသထားခြင်း
-        const c1 = localStorage.getItem("cache_shop1");
-        const c2 = localStorage.getItem("cache_shop2");
-        const cTime = localStorage.getItem("cache_time");
-
-        if (c1) incomeTxt1.innerText = c1;
-        if (c2) incomeTxt2.innerText = c2;
-        if (cTime) {
-            timeTxt1.innerText = "နောက်ဆုံးရယူချိန်: " + cTime;
-            timeTxt2.innerText = "နောက်ဆုံးရယူချိန်: " + cTime;
-        }
-
-        // Background မှ Google Sheet Data ကို အလိုအလျောက် တိုက်ရိုက်ဆွဲယူခြင်း
-        loadIncome();
-    });
-        </script>
+    </script>
 </body>
 </html>
