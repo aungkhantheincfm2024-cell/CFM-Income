@@ -131,10 +131,15 @@
 
     <div class="app-card">
         <div class="header-title">CFM Daily Income</div>
-        <div class="header-sub">အရောင်းစာရင်း အချက်အလက် ကြည့်ရှုစနစ်</div>
+        <div class="header-sub">ဆိုင်အားလုံး၏ ဝင်ငွေစာရင်း</div>
 
         <div class="income-container" id="displayBox">
-            <div class="income-label">ယနေ့ ရရှိငွေ ပမာဏ</div>
+            <div class="income-label">ဆိုင် (၁) ၏ ယနေ့ ရရှိငွေပမာဏ</div>
+            <div class="income-value" id="incomeTxt">--- ကျပ်</div>
+            <div class="timestamp" id="timeTxt">နောက်ဆုံးရယူချိန်: မရှိသေးပါ</div>
+        </div>
+    <div class="income-container" id="displayBox">
+            <div class="income-label">ဆိုင် (၂) ၏ ယနေ့ရရှိငွေပမာဏ</div>
             <div class="income-value" id="incomeTxt">--- ကျပ်</div>
             <div class="timestamp" id="timeTxt">နောက်ဆုံးရယူချိန်: မရှိသေးပါ</div>
         </div>
@@ -145,7 +150,7 @@
 
         <div class="status-msg" id="statusTxt"></div>
     </div>
-
+ 
     <script>
         // သင့် Google Apps Script Web App URL ကို ထည့်သွင်းပါ
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwPjKmIZ52kutHjo9karnaxAhvHjcz1VeyzMhoVWE-bKAA9yBhORZF4BtDrNz3TIpw/exec?cell=c2";
@@ -209,7 +214,6 @@
             } finally {
                 fetchBtn.disabled = false;
             }
-        }
-    </script>
+        }</script>
 </body>
 </html>
