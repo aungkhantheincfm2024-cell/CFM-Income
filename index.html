@@ -135,13 +135,13 @@
 
         <div class="income-container" id="displayBox">
             <div class="income-label">ဆိုင် (၁) ၏ ယနေ့ ရရှိငွေပမာဏ</div>
-            <div class="income-value" id="incomeTxt">--- ကျပ်</div>
-            <div class="timestamp" id="timeTxt">နောက်ဆုံးရယူချိန်: မရှိသေးပါ</div>
+            <div class="income-value" id="incomeTxt1">--- ကျပ်</div>
+	    <div class="timestamp" id="timeTxt1">နောက်ဆုံးရယူချိန်: မရှိသေးပါ</div>
         </div>
     <div class="income-container" id="displayBox">
             <div class="income-label">ဆိုင် (၂) ၏ ယနေ့ရရှိငွေပမာဏ</div>
-            <div class="income-value" id="incomeTxt">--- ကျပ်</div>
-            <div class="timestamp" id="timeTxt">နောက်ဆုံးရယူချိန်: မရှိသေးပါ</div>
+            <div class="income-value" id="incomeTxt2">--- ကျပ်</div>
+	    <div class="timestamp" id="timeTxt2">နောက်ဆုံးရယူချိန်: မရှိသေးပါ</div>
         </div>
 
         <button class="btn-refresh" id="fetchBtn" onclick="loadIncome()">
@@ -152,17 +152,17 @@
     </div>
  
     <script>
-        // သင့် Google Apps Script Web App URL ကို ထည့်သွင်းပါ
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwPjKmIZ52kutHjo9karnaxAhvHjcz1VeyzMhoVWE-bKAA9yBhORZF4BtDrNz3TIpw/exec?cell=c2";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwPjKmIZ52kutHjo9karnaxAhvHjcz1VeyzMhoVWE-bKAA9yBhORZF4BtDrNz3TIpw/exec";
 
-        const incomeTxt = document.getElementById("incomeTxt");
-        const timeTxt = document.getElementById("timeTxt");
-        const statusTxt = document.getElementById("statusTxt");
-        const fetchBtn = document.getElementById("fetchBtn");
-        const displayBox = document.getElementById("displayBox");
+const incomeTxt1 = document.getElementById("incomeTxt1");
+const timeTxt1 = document.getElementById("timeTxt1");
+const incomeTxt2 = document.getElementById("incomeTxt2");
+const timeTxt2 = document.getElementById("timeTxt2");
+const statusTxt = document.getElementById("statusTxt");
+const fetchBtn = document.getElementById("fetchBtn");
 
-        // စဖွင့်ချိန်တွင် စက်ထဲသိမ်းထားသော နောက်ဆုံးရ ဒေတာကို ဖော်ပြခြင်း
-        window.addEventListener("DOMContentLoaded", () => {
+ // စဖွင့်ချိန်တွင် စက်ထဲသိမ်းထားသော နောက်ဆုံးရ ဒေတာကို ဖော်ပြခြင်း
+ window.addEventListener("DOMContentLoaded", () => {
             const cachedIncome = localStorage.getItem("last_income");
             const cachedTime = localStorage.getItem("last_time");
             
@@ -174,46 +174,46 @@
             // စဖွင့်သည်နှင့် ဒေတာ အလိုအလျောက် ဆွဲယူရန်
             loadIncome();
         });
+async function loadIncome() {
+    fetchBtn.disabled = true;
+    statusTxt.className = "status-msg";
+    statusTxt.innerText = "ချိတ်ဆက်နေပါသည်...";
 
-        async function loadIncome() {
-            fetchBtn.disabled = true;
-            statusTxt.className = "status-msg";
-            statusTxt.innerText = "ချိတ်ဆက်နေပါသည်...";
+    try {
+        const response = await fetch(SCRIPT_URL, {
+            method: "GET",
+            redirect: "follow"
+        });
 
-            try {
-                const response = await fetch(SCRIPT_URL, {
-                    method: "GET",
-                    redirect: "follow"
-                });
+        if (!response.ok) {
+            throw new Error("HTTP error! Status: " + response.status);
+        }
 
-                if (!response.ok) {
-                    throw new Error("HTTP error! Status: " + response.status);
-                }
+        // JSON format ဖြင့် ဒေတာကို ဖတ်ယူခြင်း
+        const data = await response.json();
 
-                const data = await response.text();
-                const cleanValue = data.trim();
+        // ဆိုင် ၁ ဒေတာ ထည့်သွင်းခြင်း
+        const val1 = Number(data.shop1) ? Number(data.shop1).toLocaleString() + " ကျပ်" : data.shop1 + " ကျပ်";
+        incomeTxt1.innerText = val1;
 
-                // Format & Display
-                const formatted = Number(cleanValue) ? Number(cleanValue).toLocaleString() + " ကျပ်" : cleanValue + " ကျပ်";
-                incomeTxt.innerText = formatted;
+        // ဆိုင် ၂ ဒေတာ ထည့်သွင်းခြင်း
+        const val2 = Number(data.shop2) ? Number(data.shop2).toLocaleString() + " ကျပ်" : data.shop2 + " ကျပ်";
+        incomeTxt2.innerText = val2;
 
-                const now = new Date();
-                const timeString = now.toLocaleDateString() + " " + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                timeTxt.innerText = "နောက်ဆုံးရယူချိန်: " + timeString;
+        const now = new Date();
+        const timeString = now.toLocaleDateString() + " " + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        timeTxt1.innerText = "နောက်ဆုံးရယူချိန်: " + timeString;
+        timeTxt2.innerText = "နောက်ဆုံးရယူချိန်: " + timeString;
 
-                // LocalStorage တွင် သိမ်းခြင်း (Offline အတွက်)
-                localStorage.setItem("last_income", formatted);
-                localStorage.setItem("last_time", timeString);
-
-                displayBox.classList.add("active");
-                statusTxt.className = "status-msg status-success";
-                statusTxt.innerText = "ဒေတာ အောင်မြင်စွာ ရယူပြီးပါပြီ။";
-            } catch (err) {
-                statusTxt.className = "status-msg status-error";
-                statusTxt.innerText = "ချိတ်ဆက်မှု မအောင်မြင်ပါ (အင်တာနက် စစ်ဆေးပါ)";
-            } finally {
-                fetchBtn.disabled = false;
-            }
-        }</script>
+        statusTxt.className = "status-msg status-success";
+        statusTxt.innerText = "ဒေတာ အောင်မြင်စွာ ရယူပြီးပါပြီ။";
+    } catch (err) {
+        statusTxt.className = "status-msg status-error";
+        statusTxt.innerText = "ချိတ်ဆက်မှု မအောင်မြင်ပါ (အင်တာနက် စစ်ဆေးပါ)";
+    } finally {
+        fetchBtn.disabled = false;
+    }
+}
+        </script>
 </body>
 </html>
